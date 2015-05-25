@@ -1,5 +1,4 @@
 
-
 class db:
     def __init__(self):
         self.responsibles=[]
@@ -8,7 +7,7 @@ class db:
 
     def add_line(self,line):
         ri = self.create_and_add_responsible(line)
-        print str(ri)
+        self.teams.append(team(line[1],ri,None,None))
 
     def create_and_add_responsible(self,line):
         r = responsible(line[4],line[5],line[6])
@@ -22,7 +21,10 @@ class db:
         elem_list.append(elem)
         return len(elem_list)-1
 
-        
+    def __str__(self):
+        t = "Teams\n"
+        t += "\n".join([str(t) for t in self.teams])
+        return t
 
 class responsible:
     def __init__(self,name,email,phone):
@@ -47,18 +49,32 @@ class responsible:
 
 
 class team:
-    def __init__(self,name,group_id,responsible_id):
-        pass
+    def __init__(self,name,responsible_id,group_id,club_id):
+        self.name = name
+        self.responsible_id = responsible_id
+        self.group_id = group_id
+        self.club_id = club_id
+
+    def __str__(self):
+        return self.name
+
+def read_csv(filename):
+    skipped_header = False
+    registrations = []
+    for line in open(filename,"r"):
+        if not skipped_header:
+            skipped_header = True
+        else:
+            registrations.append(line.strip().split(";"))
+    return registrations
 
 if __name__=="__main__":
     mdb = db()
 
-    fid = (('0000000','VUL 1','G06','VUL','stian','sjefen@vul.no','41764253',''),
-           ('0000000','VUL 2','G06','VUL','stian','sjefen@vul.no','41764253',''),
-           ('0000000','VUL 1','G07','VUL','ole','sjefen2@vul.no','41764252',''),
-           ('0000000','VUL 2','G07','VUL','ole','sjefen2@vul.no','41764252',''))
-    
-    for line in fid:
+    registrations = read_csv("registrations.csv")
+
+    for line in registrations:
         mdb.add_line(line)
+    print (str(mdb))
 
 
